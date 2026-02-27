@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, infra]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        compiler: [clang, gcc]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install LLVM
+        if: matrix.os == 'macos-latest'
+        run: brew install llvm@20
+
+      - name: Install LLVM
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 20
+
+      - name: Configure CMake
+        env:
+          CC: ${{ matrix.compiler }}
+          CXX: ${{ matrix.compiler }}++
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DNEUROS_USE_LLVM=ON \
+            -DNEUROS_USE_BOOST=OFF \
+            -DNEUROS_USE_GTEST=ON
+
+      - name: Build
+        run: cmake --build build -j$(nproc)
+
+      - name: Run tests
+        run: ctest --output-on-failure -j$(nproc)

@@ -1,0 +1,6 @@
+if(NEUROS_GTEST_AVAILABLE)
+    add_executable(neuro_os_tests main.cpp)
+    target_link_libraries(neuro_os_tests PRIVATE neuro_os GTest::gtest GTest::gtest_main)
+    include(GoogleTest)
+    gtest_discover_tests(neuro_os_tests)
+endif()

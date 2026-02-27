@@ -1,0 +1,2 @@
+add_executable(neuro_os_example main.cpp)
+target_link_libraries(neuro_os_example PRIVATE neuro_os)
