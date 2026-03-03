@@ -39,7 +39,7 @@ public:
 
     void set_output_file(const std::string& filename) {
         std::lock_guard<std::mutex> lock(mutex_);
-        file_output_ = std::make_unique<std::ofstream>(filename, std::ios::app);
+        file_output_.reset(new std::ofstream(filename, std::ios::app));
     }
 
     void set_output_file(std::ostream* os) {
@@ -113,19 +113,17 @@ private:
     }
 
     std::string level_to_string(LogLevel level) const {
-        switch (level) {
-            case LogLevel::DEBUG: return "DEBUG";
-            case LogLevel::INFO:  return "INFO ";
-            case LogLevel::WARN: return "WARN ";
-            case LogLevel::ERROR: return "ERROR";
-        }
+        if (level == LogLevel::DEBUG) return "DEBUG";
+        if (level == LogLevel::INFO) return "INFO ";
+        if (level == LogLevel::WARN) return "WARN ";
+        if (level == LogLevel::ERROR) return "ERROR";
         return "UNKNOWN";
     }
 
     std::mutex mutex_;
-    std::atomic<int> level_{static_cast<int>(LogLevel::INFO)};
+    std::atomic<int> level_;
     std::unique_ptr<std::ostream> file_output_;
-    bool output_stdout_{true};
+    bool output_stdout_;
 };
 
 #define NEURO_OS_LOG_DEBUG(msg) \
