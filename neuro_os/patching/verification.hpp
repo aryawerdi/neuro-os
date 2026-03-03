@@ -26,9 +26,9 @@ struct PatchInfo {
 
 class SafetyVerifier {
 public:
-    static constexpr std::size_t MAX_CODE_SIZE = 1024 * 1024;
-    static constexpr std::size_t MIN_CODE_SIZE = 4;
-    static constexpr uint32_t MAX_INSTRUCTION_SIZE = 16;
+    static const std::size_t MAX_CODE_SIZE;
+    static const std::size_t MIN_CODE_SIZE;
+    static const uint32_t MAX_INSTRUCTION_SIZE;
 
     SafetyVerifier() = default;
     ~SafetyVerifier() = default;
@@ -254,6 +254,10 @@ inline bool SafetyVerifier::verify_checksum(const uint8_t* data, std::size_t siz
 
     return true;
 }
+
+const std::size_t SafetyVerifier::MAX_CODE_SIZE = 1024 * 1024;
+const std::size_t SafetyVerifier::MIN_CODE_SIZE = 4;
+const uint32_t SafetyVerifier::MAX_INSTRUCTION_SIZE = 16;
 
 }
 
